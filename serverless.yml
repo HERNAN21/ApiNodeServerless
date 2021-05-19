@@ -72,7 +72,7 @@ functions:
     handler: src/app/index.handler
     events:
       - http:
-          path: obtenerunapersona/{idpersona}
+          path: persona/{idpersona}
           method: get
           cors: true
   # Eliminar Persona
@@ -80,7 +80,7 @@ functions:
     handler: src/app/index.handler
     events:
      - http:
-         path: persona/{id}
+         path: persona/{idpersona}
          method: delete
          cors: true
 

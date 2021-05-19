@@ -8,7 +8,7 @@ const db = require('../../db-local');
 app.use(bodyParser.json({ strict: false }));
 
 
-// Obtener datos
+// Hola Mundo
 app.get('/', function (req, res) {
   res.json("Hola Mundo");
 })
@@ -79,18 +79,29 @@ app.put('/persona', function(req,res){
 });
 
 // Obtener Listado de Personas
-app.get('/obtenerunapersona', function(req, res){
-  console.log(req.params.idpersona);
-
+app.get('/persona/:idpersona', function(req, res){
   db.sequelize
-  .query('select * from persona where id=:idpersona',{replacements: req.params.idpersona},{type: db.sequelize.QueryTypes.SELECT}
+  .query("select * from persona where id="+req.params.idpersona+"", {type: db.sequelize.QueryTypes.SELECT}
   )
   .then((result)=>{
       res.json(result);
-      // console.log(result);
   })
 });
 
-
+// Eliminar Persona
+app.delete('/persona/:idpersona', function(req,res){
+  var parameters={
+    idpersona: req.params.idpersona,
+  }
+  console.log(parameters);
+  var query =" delete from persona where id=:idpersona ";
+    db.sequelize.query(query, {replacements:parameters,type: db.sequelize.QueryTypes.UPDATE})
+    .then((result)=>{
+        res.json({'respuesta':'success', 'result':result})
+    })
+    .catch((e)=>{
+        res.json({'respuesta':'error','result':e});
+    })
+});
 
 module.exports.handler = serverless(app);
