@@ -1,0 +1,88 @@
+service: appnode
+
+frameworkVersion: '2'
+
+custom:
+  secrets: ${file(secrets.json)}
+  serverless-offline:
+    noPrependStageInUrl: true
+
+#Configuracion de Acceso a la DB
+provider:
+  name: aws
+  lambdaHashingVersion: 20201221
+  runtime: nodejs12.x
+  timeout: 30
+  stage: ${self:custom.secrets.NODE_ENV}
+  environment: 
+    NODE_ENV: ${self:custom.secrets.NODE_ENV}
+    DB_NAME: ${self:custom.secrets.DB_NAME}
+    DB_USER: ${self:custom.secrets.DB_USER}
+    DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
+    DB_HOST: ${self:custom.secrets.DB_HOST}
+    DB_PORT: ${self:custom.secrets.DB_PORT}
+  vpc:
+    securityGroupIds:
+      - ${self:custom.secrets.SECURITY_GROUP_ID}
+    subnetIds:
+      - ${self:custom.secrets.SUBNET1_ID}
+      - ${self:custom.secrets.SUBNET2_ID}
+      - ${self:custom.secrets.SUBNET3_ID}
+      - ${self:custom.secrets.SUBNET4_ID}
+      - ${self:custom.secrets.SUBNET5_ID}
+      - ${self:custom.secrets.SUBNET6_ID}
+
+#Creacion de Funciones
+functions:
+  # Hola Mundo
+  TestConnection:
+    handler: src/app/index.handler
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
+  # Obtener persona
+  getPersona:
+    handler: src/app/index.handler
+    events:
+      - http:
+          path: persona
+          method: get
+          cors: true
+  # Registar Persona
+  create:
+    handler: src/app/index.handler
+    events:
+      - http:
+          path: persona
+          method: post
+          cors: true
+  # Actualizar Persona
+  update:
+    handler: src/app/index.handler
+    events:
+     - http:
+        #  path: persona/{id}
+         path: persona
+         method: put
+         cors: true
+  # Obtener Una Persona
+  getOne:
+    handler: src/app/index.handler
+    events:
+      - http:
+          path: obtenerunapersona/{idpersona}
+          method: get
+          cors: true
+  # Eliminar Persona
+  destroy:
+    handler: src/app/index.handler
+    events:
+     - http:
+         path: persona/{id}
+         method: delete
+         cors: true
+
+plugins:
+  - serverless-offline
